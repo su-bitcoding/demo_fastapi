@@ -27,3 +27,6 @@ class User(Base):
             raise ValueError("Invalid email address")
         return address.lower() 
 
+
+
+
