@@ -3,7 +3,7 @@ repos:
     hooks:
       - id: run-tests
         name: Run Tests Before Commit
-        entry: python test.py
+        entry: python test.py -v       # or 'pytest -v' if you use pytest
         language: python
         types: [python]
         additional_dependencies:

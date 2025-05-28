@@ -11,6 +11,7 @@ templates = Jinja2Templates(directory="templates")
 
 app = FastAPI()
 
+
 # Create DB tables
 Base.metadata.create_all(bind=engine)
 
