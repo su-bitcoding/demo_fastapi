@@ -6,7 +6,6 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from models import User
 from database import SessionLocal, engine, Base
-import re
 
 templates = Jinja2Templates(directory="templates")
 
