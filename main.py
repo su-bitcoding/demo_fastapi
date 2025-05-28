@@ -84,3 +84,5 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     return {"success": True, "message": "User created successfully"}
 
 
+
+
