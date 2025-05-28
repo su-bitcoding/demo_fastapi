@@ -5,6 +5,8 @@ import re
 class Base(DeclarativeBase):
     pass
 
+
+print("Base class created for SQLAlchemy models")
 class User(Base):
     __tablename__ = "users"
     
