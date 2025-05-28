@@ -185,3 +185,5 @@ alembic/
 ./alembic
 test.db
 test1.db
+images/
+uploads/

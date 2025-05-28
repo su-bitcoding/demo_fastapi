@@ -1,11 +1,15 @@
-from fastapi import FastAPI, Depends, Request, HTTPException
+import os
+import uuid
+import shutil
+from fastapi import FastAPI, Depends, Request, HTTPException,UploadFile, File, Form
 from fastapi.responses import JSONResponse
 from fastapi.exceptions import RequestValidationError
 from pydantic import BaseModel, EmailStr, Field
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from models import User
+from models import Upload, User
 from database import SessionLocal, engine, Base
+from datetime import datetime
 
 templates = Jinja2Templates(directory="templates")
 
@@ -85,6 +89,66 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
 
     return {"success": True, "message": "User created successfully"}
 
+UPLOAD_DIR = "uploads"
+IMAGE_DIR = "images"
+os.makedirs(UPLOAD_DIR, exist_ok=True)
+os.makedirs(IMAGE_DIR, exist_ok=True)
 
+@app.post("/upload/")
+def upload_file(
+    username: str = Form(...),
+    message: str = Form(None),
+    file: UploadFile = File(None),
+    image: UploadFile = File(None),
+    db: Session = Depends(get_db)
+):
+    file_path = None
+    file_name = None
+    file_size = None
+    content_type = None
 
+    if file:
+        file_name = f"{uuid.uuid4()}_{file.filename}"
+        file_path = os.path.join(UPLOAD_DIR, file_name)
+        try:
+            with open(file_path, "wb") as buffer:
+                shutil.copyfileobj(file.file, buffer)
+        except OSError as e:
+            raise HTTPException(status_code=400, detail="Filename too long.")
 
+        file_size = os.path.getsize(file_path)
+        content_type = file.content_type
+
+    image_path = None
+    image_name = None
+    image_size = None
+
+    if image:
+        image_name = f"{uuid.uuid4()}_{image.filename}"
+        image_path = os.path.join(IMAGE_DIR, image_name)
+        with open(image_path, "wb") as buffer:
+            shutil.copyfileobj(image.file, buffer)
+        image_size = os.path.getsize(image_path)
+
+    try:
+        upload = Upload(
+            username=username,
+            message=message,
+            file_path=file_path,
+            image_path=image_path,
+            file_name=file.filename if file else None,
+            image_name=image.filename if image else None,
+            file_size=file_size,
+            image_size=image_size,
+            content_type=content_type,
+            created_at=datetime.now(),
+            updated_at=datetime.now()
+        )
+        db.add(upload)
+        db.commit()
+        db.refresh(upload)
+        return {"message": "Upload successful", "id": upload.id}
+    except ValueError as ve:
+        raise HTTPException(status_code=400, detail=str(ve))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal Server Error")
