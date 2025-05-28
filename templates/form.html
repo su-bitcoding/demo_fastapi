@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User Registration Form</title>
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="email"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .error {
+            border: 2px solid red;
+        }
+        .valid {
+            border: 2px solid green;
+        }
+        .error-message {
+            color: red;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+        .submit-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+    </style>
+    <script>
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function validateField(fieldId, isRequired = true, customValidator = null) {
+            const input = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(`${fieldId}-error`);
+            const value = input.value.trim();
+
+            if (isRequired && value === "") {
+                input.className = "error";
+                errorDiv.textContent = `${fieldId.charAt(0).toUpperCase() + fieldId.slice(1)} is required`;
+                return false;
+            }
+
+            if (value !== "" && customValidator && !customValidator(value)) {
+                input.className = "error";
+                return false;
+            }
+
+            if (value !== "") {
+                input.className = "valid";
+                errorDiv.textContent = "";
+                return true;
+            }
+
+            input.className = "";
+            errorDiv.textContent = "";
+            return !isRequired;
+        }
+
+        function validateEmailField() {
+            const emailInput = document.getElementById("email");
+            const emailError = document.getElementById("email-error");
+            const email = emailInput.value.trim();
+
+            if (email === "") {
+                emailInput.className = "error";
+                emailError.textContent = "Email is required";
+                return false;
+            }
+
+            if (validateEmail(email)) {
+                emailInput.className = "valid";
+                emailError.textContent = "";
+                return true;
+            } else {
+                emailInput.className = "error";
+                emailError.textContent = "Please enter a valid email address";
+                return false;
+            }
+        }
+
+        function validateNameField() {
+            return validateField("name", true);
+        }
+
+        function validateDevelopmentField() {
+            return validateField("development", true);
+        }
+
+        function validateProductionField() {
+            return validateField("production", true);
+        }
+
+        function validateStagingField() {
+            return validateField("staging", true);
+        }
+
+        function validateAddressField() {
+            return validateField("address", true);
+        }
+
+        async function submitForm(event) {
+            event.preventDefault();
+            
+            // Validate all fields
+            const isNameValid = validateNameField();
+            const isEmailValid = validateEmailField();
+            const isDevelopmentValid = validateDevelopmentField();
+            const isProductionValid = validateProductionField();
+            const isStagingValid = validateStagingField();
+            const isAddressValid = validateAddressField();
+
+            if (!isNameValid || !isEmailValid || !isDevelopmentValid || 
+                !isProductionValid || !isStagingValid || !isAddressValid) {
+                document.getElementById("result").innerHTML = `<p style="color:red;">Please fix the errors above</p>`;
+                return;
+            }
+
+            // Disable submit button
+            const submitBtn = document.getElementById("submit-btn");
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Submitting...";
+
+            // Collect form data
+            const formData = {
+                name: document.getElementById("name").value.trim(),
+                email: document.getElementById("email").value.trim(),
+                development: document.getElementById("development").value.trim(),
+                production: document.getElementById("production").value.trim(),
+                staging: document.getElementById("staging").value.trim(),
+                address: document.getElementById("address").value.trim()
+            };
+
+            try {
+                const response = await fetch("/users", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                const resultDiv = document.getElementById("result");
+                if (result.success) {
+                    resultDiv.innerHTML = `<p style="color:green;">${result.message}</p>`;
+                    // Reset form on success
+                    document.getElementById("user-form").reset();
+                    // Clear validation classes
+                    const inputs = document.querySelectorAll("input, textarea");
+                    inputs.forEach(input => input.className = "");
+                } else {
+                    if (result.detail && Array.isArray(result.detail)) {
+                        const errorMessages = result.detail.map(error => error.msg || error).join(", ");
+                        resultDiv.innerHTML = `<p style="color:red;">${errorMessages}</p>`;
+                    } else {
+                        resultDiv.innerHTML = `<p style="color:red;">${result.detail || "An error occurred"}</p>`;
+                    }
+                }
+            } catch (error) {
+                document.getElementById("result").innerHTML = `<p style="color:red;">Network error. Please try again.</p>`;
+                console.error("Error:", error);
+            } finally {
+                // Re-enable submit button
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit";
+            }
+        }
+
+        // Add event listeners when page loads
+        window.onload = function() {
+            document.getElementById("name").addEventListener("blur", validateNameField);
+            document.getElementById("email").addEventListener("blur", validateEmailField);
+            document.getElementById("development").addEventListener("blur", validateDevelopmentField);
+            document.getElementById("production").addEventListener("blur", validateProductionField);
+            document.getElementById("staging").addEventListener("blur", validateStagingField);
+            document.getElementById("address").addEventListener("blur", validateAddressField);
+        }
+    </script>
+</head>
+<body>
+    <div class="form-container">
+        <h2>User Registration Form</h2>
+        <form id="user-form" onsubmit="submitForm(event)">
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+                <div id="name-error" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                <div id="email-error" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="development">Development Environment:</label>
+                <input type="text" id="development" name="development" required 
+                       placeholder="e.g., localhost:3000, dev.example.com">
+                <div id="development-error" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="production">Production Environment:</label>
+                <input type="text" id="production" name="production" required 
+                       placeholder="e.g., www.example.com, api.example.com">
+                <div id="production-error" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="staging">Staging Environment:</label>
+                <input type="text" id="staging" name="staging" required 
+                       placeholder="e.g., staging.example.com, test.example.com">
+                <div id="staging-error" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="address">Address:</label>
+                <textarea id="address" name="address" required rows="3" 
+                          placeholder="Enter your full address"></textarea>
+                <div id="address-error" class="error-message"></div>
+            </div>
+
+            <div class="form-group">
+                <button type="submit" id="submit-btn" class="submit-btn">Submit</button>
+            </div>
+        </form>
+        <div id="result"></div>
+    </div>
+</body>
+</html>
