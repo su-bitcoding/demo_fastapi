@@ -26,3 +26,4 @@ class User(Base):
         if not re.match(email_regex, address):
             raise ValueError("Invalid email address")
         return address.lower() 
+
