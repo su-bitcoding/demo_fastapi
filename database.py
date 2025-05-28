@@ -6,5 +6,3 @@ DATABASE_URL = "postgresql://uday:1234@localhost:5432/fast_api"
 
 engine = create_engine(DATABASE_URL)  # Sync engine
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
-print("Database URL:", DATABASE_URL)

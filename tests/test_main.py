@@ -37,16 +37,18 @@ client = TestClient(app)
 def test_create_user_success():
     """Test successful user creation"""
     response = client.post(
-        "/user1s",
+        "/users",
         json={
             "name": "Test User",
-            "email": "test@example.com",
+            "email": "test@exampl1e.com",
             "development": "dev",
             "production": "prod",
             "staging": "stage",
             "address": "123 Test St"
         }
     )
+
+    print("::::::::::::  ",response.json())
     assert response.status_code == 200
     assert response.json() == {"success": True, "message": "User created successfully"}
 
@@ -144,7 +146,7 @@ def test_create_user_with_extra_fields():
             "development": "dev",
             "production": "prod",
             "staging": "stage",
-            "address1111111": "123 Test St",
+            "address": "123 Test St",
         }
     )
     assert response.status_code == 200
