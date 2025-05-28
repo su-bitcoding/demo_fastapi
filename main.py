@@ -64,9 +64,8 @@ class UserCreate(BaseModel):
 
 @app.post("/users")
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
-    print(f"Creating user with name: {user.name}, email: {user.email}")
-    
-    existing_user = db.query(User).filter(User.email == user.email).first()
+
+    existing_user = db.query(User).filter(User.email == user.email and User.address == user.address).first()
     if existing_user:
         raise HTTPException(status_code=400, detail="Email already registered")
 
