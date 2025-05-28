@@ -109,6 +109,9 @@
         function validateNameField() {
             return validateField("name", true);
         }
+        function validateName1Field() {
+            return validateField("name1", true);
+        }
 
         function validateDevelopmentField() {
             return validateField("development", true);
@@ -151,6 +154,7 @@
             // Collect form data
             const formData = {
                 name: document.getElementById("name").value.trim(),
+                name1: document.getElementById("name1").value.trim(),
                 email: document.getElementById("email").value.trim(),
                 development: document.getElementById("development").value.trim(),
                 production: document.getElementById("production").value.trim(),
@@ -198,6 +202,7 @@
         // Add event listeners when page loads
         window.onload = function() {
             document.getElementById("name").addEventListener("blur", validateNameField);
+            document.getElementById("name1").addEventListener("blur", validateName1Field);
             document.getElementById("email").addEventListener("blur", validateEmailField);
             document.getElementById("development").addEventListener("blur", validateDevelopmentField);
             document.getElementById("production").addEventListener("blur", validateProductionField);
@@ -214,6 +219,11 @@
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name" required>
                 <div id="name-error" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="name1">Name:</label>
+                <input type="text" id="name1" name="name1" required>
+                <div id="name1-error" class="error-message"></div>
             </div>
 
             <div class="form-group">
