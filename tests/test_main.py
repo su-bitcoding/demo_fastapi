@@ -44,7 +44,8 @@ def test_create_user_success():
             "development": "dev",
             "production": "prod",
             "staging": "stage",
-            "address": "123 Test St"
+            "address": "123 Test St",
+            "name1": "Test Name"
         }
     )
 
@@ -62,7 +63,8 @@ def test_create_user_duplicate_email():
             "development": "dev",
             "production": "prod",
             "staging": "stage",
-            "address": "123 Test St"
+            "address": "123 Test St",
+            "name1": "Test Name"
         }
     )
     assert response.status_code == 200
@@ -76,6 +78,7 @@ def test_create_user_duplicate_email():
             "development": "dev2",
             "production": "prod2",
             "staging": "stage2",
+            "name1": "Test Name",
             "address": "456 Test St"
         }
     )
@@ -92,6 +95,7 @@ def test_create_user_invalid_email():
             "development": "dev",
             "production": "prod",
             "staging": "stage",
+            "name1": "Test Name",
             "address": "123 Test St"
         }
     )
@@ -104,7 +108,9 @@ def test_create_user_missing_fields():
         "/users",
         json={
             "name": "Test User",
-            "email": "test@example.com"
+            "email": "test@example.com",
+            "name1": "Test Name"
+
         }
     )
     assert response.status_code == 422
@@ -120,6 +126,7 @@ def test_create_user_empty_fields():
             "development": "",
             "production": "",
             "staging": "",
+            "name1": "Test Name",
             "address": ""
         }
     )
@@ -146,9 +153,9 @@ def test_create_user_with_extra_fields():
             "production": "prod",
             "staging": "stage",
             "address": "123 Test St",
+            "name1": "Test Name"
         }
     )
     assert response.status_code == 200
     assert response.json() == {"success": True, "message": "User created successfully"} 
 
-print("All tests passed")

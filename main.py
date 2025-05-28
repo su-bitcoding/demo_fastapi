@@ -59,6 +59,7 @@ class UserCreate(BaseModel):
     development: str = Field(..., description="Development environment details")
     production: str = Field(..., description="Production environment details")
     staging: str = Field(..., description="Staging environment details")
+    name1: str = Field(..., description="User's name1")
     address: str = Field(..., description="User's address")
     
 
@@ -75,6 +76,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         development=user.development,
         production=user.production,
         staging=user.staging,
+        name1=user.name1,
         address=user.address
     )
     db.add(new_user)

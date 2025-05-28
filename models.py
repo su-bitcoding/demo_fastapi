@@ -17,7 +17,7 @@ class User(Base):
     staging = Column(String(255), nullable=False)
     
     address = Column(String(255), nullable=False)
-
+    name1 = Column(String(255), nullable=False)
     email = Column(String(255), unique=True, index=True)
     
     @validates('email')
