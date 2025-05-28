@@ -48,7 +48,6 @@ def test_create_user_success():
         }
     )
 
-    print("::::::::::::  ",response.json())
     assert response.status_code == 200
     assert response.json() == {"success": True, "message": "User created successfully"}
 
