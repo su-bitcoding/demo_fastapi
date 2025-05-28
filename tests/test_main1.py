@@ -6,10 +6,10 @@ from sqlalchemy.orm import sessionmaker
 from models import Base
 
 # Use an in-memory SQLite database for testing
-if os.path.exists("test.db"):
-    os.remove("test.db")
+if os.path.exists("test1.db"):
+    os.remove("test1.db")
 
-SQLALCHEMY_DATABASE_URL = "sqlite:///./test.db"  # or "sqlite:///:memory:" for in-memory
+SQLALCHEMY_DATABASE_URL = "sqlite:///./test1.db"  # or "sqlite:///:memory:" for in-memory
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
@@ -39,8 +39,8 @@ def test_create_user_success():
     response = client.post(
         "/users",
         json={
-            "name": "Test User",
-            "email": "test@exampl1e.com",
+            "name": "Test1 User",
+            "email": "test11@exampl1e.com",
             "development": "dev",
             "production": "prod",
             "staging": "stage",
@@ -59,7 +59,7 @@ def test_create_user_duplicate_email():
         "/users",
         json={
             "name": "Test User",
-            "email": "duplicate@example.com",
+            "email": "dupl11icate@example.com",
             "development": "dev",
             "production": "prod",
             "staging": "stage",
@@ -74,7 +74,7 @@ def test_create_user_duplicate_email():
         "/users",
         json={
             "name": "Another User",
-            "email": "duplicate@example.com",
+            "email": "dupl11icate@example.com",
             "development": "dev2",
             "production": "prod2",
             "staging": "stage2",
@@ -122,7 +122,7 @@ def test_create_user_empty_fields():
         "/users",
         json={
             "name": "",
-            "email": "testdat89a@example.com",
+            "email": "testdata@example.com",
             "development": "",
             "production": "",
             "staging": "",
@@ -149,7 +149,7 @@ def test_create_user_with_extra_fields():
         "/users",
         json={
             "name": "Test User",
-            "email": "testcreatewithextra@example.com",
+            "email": "testcreatewitithextra@example.com",
             "development": "dev",
             "production": "prod",
             "staging": "stage",
